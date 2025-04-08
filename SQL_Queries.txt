@@ -1,0 +1,84 @@
+-- Create the books database
+CREATE DATABASE books;
+
+-- Retrieve all books in the "Fiction" genre
+SELECT * 
+FROM books.books
+WHERE Genre = "Fiction";
+
+-- Find books published after the year 1950
+SELECT * 
+FROM books.books
+WHERE Published_Year >= 1950;
+
+-- List all customers from Canada
+SELECT * 
+FROM books.customers
+WHERE Country = "Canada";
+
+-- Show orders placed in November 2023
+SELECT * 
+FROM books.orders
+WHERE MONTH(Order_Date) = 11;
+
+-- Retrieve the total stock of books available
+SELECT SUM(books.Stock) AS Total_Stock
+FROM books.books;
+
+-- Find the details of the most expensive book
+SELECT * 
+FROM books.books
+ORDER BY Price DESC
+LIMIT 1;
+
+-- Show all customers who ordered more than 4 quantity of a book with their names, country, genre, and title
+SELECT customers.Name, customers.Country, books.Genre, books.Title, books.Published_Year, orders.Quantity
+FROM books.customers 
+JOIN books.orders ON customers.Customer_ID = orders.Customer_ID
+JOIN books.books ON orders.Book_ID = books.Book_ID
+WHERE orders.Quantity > 4
+ORDER BY books.Genre, customers.Country;
+
+-- Retrieve all orders where the total amount exceeds $20
+SELECT * 
+FROM books.orders
+WHERE Total_Amount > 20;
+
+-- List all genres available in the Books table
+SELECT DISTINCT Genre 
+FROM books.books;
+
+-- Find the book with the lowest stock
+SELECT * 
+FROM books.books
+ORDER BY books.Stock ASC
+LIMIT 1;
+
+-- Calculate the total revenue generated from all orders
+SELECT SUM(Total_Amount) AS Revenue
+FROM books.orders;
+
+-- Retrieve the total number of books sold for each genre
+SELECT books.Genre, SUM(orders.Quantity) AS Total_Sales
+FROM books.books 
+JOIN books.orders ON books.Book_ID = orders.Book_ID
+GROUP BY books.Genre;
+
+-- Find the average price of books in the "Fantasy" genre
+SELECT ROUND(AVG(books.Price), 2) AS Average_Price
+FROM books.books
+WHERE books.Genre = "Fantasy";
+
+-- List customers who have placed at least 2 orders
+SELECT customers.Name, customers.Country, COUNT(orders.Order_ID) AS Order_Count
+FROM books.customers 
+JOIN books.orders ON customers.Customer_ID = orders.Customer_ID
+GROUP BY customers.Name, customers.Country
+HAVING COUNT(orders.Order_ID) >= 2;
+
+-- Find the most frequently ordered book
+SELECT books.Title, books.Price, COUNT(orders.Order_ID) AS Total_Sold
+FROM books.books 
+JOIN books.orders ON books.Book_ID = orders.Book_ID
+GROUP BY books.Title
+
